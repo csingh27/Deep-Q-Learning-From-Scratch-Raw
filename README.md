@@ -10,3 +10,5 @@ Deep Q-Learning for Playing Atari - Raw
 - Q'-Value
 * Deep Learning
 - DQN Architecture
+* Deep RL Framework 
+- Experience Replay
