@@ -1,6 +1,6 @@
 # Define environment 
 import gymnasium as gym
-gym.make("ALE/breakout-vALE/breakout-v5")
+env = gym.make("ALE/Breakout-v5")
 
 # Define agent
 
