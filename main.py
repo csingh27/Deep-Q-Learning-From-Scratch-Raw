@@ -46,8 +46,10 @@ def data_preprocessing(state):
 def mini_batch(rb):
     return 0
 
-def state_sequence():
-    return 0
+def state_sequence(rb):
+    seq = rb.tail(4)
+    rb = rb.iloc[:-4]
+    return rb
 
 done = False
 # while not done:
@@ -81,6 +83,12 @@ for i in range(0, replay_buffer_size):
     # cv2.waitKey(0)
 
 print(replay_buffer)
+
+rb = replay_buffer
+
+while not done:
+    state = env.reset()
+    seq, rb = state_sequence(rb)
 
 env.close()
 
