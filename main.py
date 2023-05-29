@@ -89,11 +89,48 @@ rb = replay_buffer
 while not done:
     state = env.reset()
     seq, rb = state_sequence(rb)
+    state = seq["State"]
+    action = dqn.forward(state)
+    env.step(action)
 
 env.close()
 
 # Define agent
-# def dqn: 
+class DQN(nn.Module):
+    def __init__(self, input_shape, num_actions:
+        
+        super(DQN, self).__init__())
+
+        self.conv1 = nn.Conv2d(input_shape[0], 16, kernel_size=8, stride=4)
+        self.relu1 = nn.ReLU()
+
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=2, stride=2)
+        self.relu2 = nn.ReLU()
+
+        self.fc3 = nn.Linear(self.fc_input_size(input_shape), 256)
+        self.relu3 = nn.ReLU()
+
+        self.fc4 = nn.Linear(256, num_actions)
+
+    def fc_input_shape(self, input_shape):
+
+        dummy_input = torch.zeros(1, *input_shape)
+        dummy_output = self.conv2(self.relu(self.conv1(dummy_input)))
+
+        return int(dummy_output.view(-1).size()[0])
+
+    def forward(self, x):
+
+        x = self.relu1(self.conv1(x))
+        x = self.relu2(self.conv2(x))
+
+        x = x.view(x.size(0), -1)
+        x = self.relu3(self.fc3(x))
+        x = self.fc4(x)
+
+        return x
+
+
 
 
 # Define DQN network
