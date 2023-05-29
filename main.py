@@ -4,6 +4,7 @@ env = gym.make("ALE/Breakout-v5", render_mode = 'human')
 import torch as t
 import cv2
 import numpy as np
+import pandas as pd
 
 # A1 Environment
 # A1.1 Install packages
@@ -13,7 +14,12 @@ import numpy as np
 # A1.5 Rendering actions
 # A1.6 Understanding observation space
 
-# Dataset pre-processing
+
+# A3.2 Define a dataframe for experience replay buffer
+columns = ["State", "Action", "Reward", "Done"]
+rb = pd.DataFrame(columns=columns)
+
+# A2 Dataset pre-processing
 def frame_preprocessing(frame):
     # A2 Dataset preprocessing
     # A2.1 Convert RGB to gray scale
@@ -24,17 +30,27 @@ def frame_preprocessing(frame):
     downsampled_frame = cv2.resize(gray_frame, (110, 84))
     # A2.3 Cropping the image
     state = downsampled_frame[110-84:,:]
-
     return state
+
+# A3 Define replay buffer
+def experience_replay(s, a, r, d):
+    rb.loc[len(rb)] = [state, action, reward, done]
+    return rb
+
+def mini_batch(rb):
+    return 0
+
+def state_sequence():
+    return 0
 
 done = False
 while not done:
     state = env.reset()
     frame = np.asarray(state[0])
-    print(frame.shape)
+    # print(frame.shape)
 
     state = frame_preprocessing(frame)
-    print(state.shape)
+    # print(state.shape)
 
     # Random action
     action = env.action_space.sample()
@@ -45,15 +61,18 @@ while not done:
     # 2 RIGHT
     # 3 LEFT
     # state, action, reward, done = 
-    env.step(action)
+    # A3.1 Define state, action, reward
+    state, action, reward, done, truncate = env.step(action) # truncate is when the episode length exceeds the set timelimit
+    replay_buffer = experience_replay(state, action, reward, done)
+    print(replay_buffer)
 
     # frame = env.render()
-    print(env.observation_space)
+    # print(env.observation_space)
 
     # Display frame
-    cv2.imshow("Frame", frame)
-    cv2.imshow("State", state)
-    cv2.waitKey(0)
+    # cv2.imshow("Frame", frame)
+    # cv2.imshow("State", state)
+    # cv2.waitKey(0)
 
 env.close()
 
