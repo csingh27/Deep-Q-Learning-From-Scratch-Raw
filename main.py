@@ -34,8 +34,14 @@ def frame_preprocessing(frame):
 
 # A3 Define replay buffer
 def experience_replay(s, a, r, d):
+    # A3.3 Add state, action, reward and done to dataframe
     rb.loc[len(rb)] = [state, action, reward, done]
     return rb
+
+def data_preprocessing(state):
+    frame = np.asarray(state[0])
+    state = frame_preprocessing(frame)
+    return state
 
 def mini_batch(rb):
     return 0
@@ -44,13 +50,13 @@ def state_sequence():
     return 0
 
 done = False
-while not done:
-    state = env.reset()
-    frame = np.asarray(state[0])
-    # print(frame.shape)
+# while not done:
 
-    state = frame_preprocessing(frame)
-    # print(state.shape)
+replay_buffer_size = 1000
+
+for i in range(0, replay_buffer_size):
+    state = env.reset()
+    state = data_preprocessing(state)
 
     # Random action
     action = env.action_space.sample()
@@ -62,9 +68,9 @@ while not done:
     # 3 LEFT
     # state, action, reward, done = 
     # A3.1 Define state, action, reward
-    state, action, reward, done, truncate = env.step(action) # truncate is when the episode length exceeds the set timelimit
+
+    state, reward, done, truncate, info = env.step(action) # truncate is when the episode length exceeds the set timelimit
     replay_buffer = experience_replay(state, action, reward, done)
-    print(replay_buffer)
 
     # frame = env.render()
     # print(env.observation_space)
@@ -73,6 +79,8 @@ while not done:
     # cv2.imshow("Frame", frame)
     # cv2.imshow("State", state)
     # cv2.waitKey(0)
+
+print(replay_buffer)
 
 env.close()
 
