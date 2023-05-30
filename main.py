@@ -68,11 +68,14 @@ class DQN(nn.Module):
         
         super(DQN, self).__init__()
 
-        self.conv1 = nn.Conv2d(input_shape[0], 16, kernel_size=8, stride=4)
+        self.conv1 = nn.Conv2d(input_shape[0], 32, kernel_size=8, stride=4)
         self.relu1 = nn.ReLU()
 
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=2, stride=2)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
         self.relu2 = nn.ReLU()
+
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
+        self.relu3 = nn.ReLU()
 
         self.fc3 = nn.Linear(self.fc_input_size(input_shape), 256)
         self.relu3 = nn.ReLU()
@@ -82,7 +85,7 @@ class DQN(nn.Module):
     def fc_input_shape(self, input_shape):
 
         dummy_input = torch.zeros(1, *input_shape)
-        dummy_output = self.conv2(self.relu(self.conv1(dummy_input)))
+        dummy_output = self.relu3(self.conv3(self.relu2(self.conv2(self.relu1(self.conv1(dummy_input))))))
 
         return int(dummy_output.view(-1).size()[0])
 
@@ -127,8 +130,8 @@ for i in range(0, replay_buffer_size):
 
     # Display frame
     # cv2.imshow("Frame", frame)
-    cv2.imshow("State", state)
-    cv2.waitKey(0)
+    # cv2.imshow("State", state)
+    # cv2.waitKey(0)
 
 print(replay_buffer)
 
