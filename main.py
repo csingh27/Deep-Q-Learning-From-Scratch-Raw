@@ -77,14 +77,14 @@ class DQN(nn.Module):
         self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
         self.relu3 = nn.ReLU()
 
-        self.fc3 = nn.Linear(self.fc_input_size(input_shape), 256)
+        self.fc3 = nn.Linear(self.fc_input_shape(input_shape), 256)
         self.relu3 = nn.ReLU()
 
         self.fc4 = nn.Linear(256, num_actions)
 
     def fc_input_shape(self, input_shape):
 
-        dummy_input = torch.zeros(1, *input_shape)
+        dummy_input = t.zeros(1, *input_shape)
         dummy_output = self.relu3(self.conv3(self.relu2(self.conv2(self.relu1(self.conv1(dummy_input))))))
 
         return int(dummy_output.view(-1).size()[0])
@@ -136,6 +136,10 @@ for i in range(0, replay_buffer_size):
 print(replay_buffer)
 
 rb = replay_buffer
+
+# Create Q-Networks
+q = DQN(state.shape, num_actions)
+q_trans = q.copy()
 
 def train():
     mini_batch = 32
