@@ -178,6 +178,9 @@ class DQNAgent:
 # 210*160*3(color) --> 84*84(mono)
 # float --> integer (to reduce the size of replay memory)
 def pre_processing(observe):
+
+    # A2.1 Convert to gray scale 
+    # A2.2 Resize
     processed_observe = np.uint8(
         resize(rgb2gray(observe), (84, 84), mode='constant') * 255)
     return processed_observe
@@ -186,18 +189,28 @@ def pre_processing(observe):
 if __name__ == "__main__":
     # In case of BreakoutDeterministic-v3, always skip 4 frames
     # Deterministic-v4 version use 4 actions
+
+    # A1 Environment
+    # A1.1 Install gym
+    # A1.2 Create gym environment
+
     env = gym.make('BreakoutDeterministic-v4')
     agent = DQNAgent(action_size=3)
 
     scores, episodes, global_step = [], [], 0
 
     for e in range(EPISODES):
+
+        # A1.3 Initialize variables
         done = False
         dead = False
         # 1 episode = 5 lives
         step, score, start_life = 0, 0, 5
+
+        # A1.4 Reset environment 
         observe = env.reset()
 
+        # A1.5 Take empty steps in the beginning
         # this is one of DeepMind's idea.
         # just do nothing at the start of episode to avoid sub-optimal
         for _ in range(random.randint(1, agent.no_op_steps)):
@@ -205,17 +218,27 @@ if __name__ == "__main__":
 
         # At start of episode, there is no preceding frame
         # So just copy initial states to make history
+
+        # A2 Dataset pre-processing
         state = pre_processing(observe)
+
+        # A2.2 Create initial history
         history = np.stack((state, state, state, state), axis=2)
+        # A2.3 Re-shape history
         history = np.reshape([history], (1, 84, 84, 4))
 
+
+        # A3 Fill replay buffer
+        # A3.1 Define loop and variables
         while not done:
+            # A3.2 Render environment
             if agent.render:
                 env.render()
             global_step += 1
             step += 1
 
             # get action for the current history and go one step in environment
+            # A3.2 Ger random action 
             action = agent.get_action(history)
             # change action to real_action
             if action == 0:
@@ -225,6 +248,7 @@ if __name__ == "__main__":
             else:
                 real_action = 3
 
+            # A3.3 Take steps
             observe, reward, done, truncation, info = env.step(real_action)
             # pre-process the observation --> history
             next_state = pre_processing(observe)
