@@ -29,9 +29,13 @@ def frame_preprocessing(frame):
     # A2.2 Downsampling to 110x84
     new_width = 110
     new_height = 84
+
     downsampled_frame = cv2.resize(gray_frame, (110, 84))
+
+
     # A2.3 Cropping the image
-    state = downsampled_frame[110-84:,:]
+    state = downsampled_frame[:,13:97] # 110-84 
+    
     return state
 
 # A3 Define replay buffer
@@ -102,10 +106,11 @@ class DQN(nn.Module):
 for i in range(0, replay_buffer_size):
     state = env.reset()
     state = data_preprocessing(state)
+    print(state.shape)
 
     # Random action
     action = env.action_space.sample()
-    print(action) 
+    ##  print(action) 
     # action_space = Discrete(4) 
     # 0 NOOP (No action)
     # 1 FIRE
@@ -122,8 +127,8 @@ for i in range(0, replay_buffer_size):
 
     # Display frame
     # cv2.imshow("Frame", frame)
-    # cv2.imshow("State", state)
-    # cv2.waitKey(0)
+    cv2.imshow("State", state)
+    cv2.waitKey(0)
 
 print(replay_buffer)
 
@@ -132,6 +137,7 @@ rb = replay_buffer
 def train():
     mini_batch = 32
 
+"""
 
 while not done:
     state = env.reset()
@@ -143,6 +149,7 @@ while not done:
 
 env.close()
 
+"""
 
 # Define DQN network
 
