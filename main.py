@@ -6,6 +6,7 @@ import torch.nn as nn
 import cv2
 import numpy as np
 import pandas as pd
+import torch.optim as optim
 
 # A1 Environment
 # A1.1 Install packages
@@ -19,7 +20,15 @@ import pandas as pd
 # A3.2 Define a dataframe for experience replay buffer
 columns = ["State", "Action", "Reward", "Done"]
 rb = pd.DataFrame(columns=columns)
+
 num_actions = 4
+
+learning_rate = 0.00025
+alpha = 0.9
+eps = 1e-08
+weight_decay = 0
+momentum = 0
+centered = False
 
 # A2 Dataset pre-processing
 def frame_preprocessing(frame):
@@ -77,7 +86,7 @@ class DQN(nn.Module):
         self.conv3 = nn.Conv2d(32, 64, kernel_size=2, stride=2)
         self.relu3 = nn.ReLU()
 
-        self.fc3 = nn.Linear(self.fc_input_shape(input_shape), 256)
+        self.fc3 = nn.Linear(self.fc_input_shape(input_shape),512)
         self.relu3 = nn.ReLU()
 
         self.fc4 = nn.Linear(256, num_actions)
@@ -140,6 +149,9 @@ rb = replay_buffer
 # Create Q-Networks
 q = DQN(state.shape, num_actions)
 q_trans = q.copy()
+
+
+optimizer = optim.RMSprop(q.parameters(), lr=learning_rate, alpha=alpha, eps=eps, weight_decay=weight_decay, momentum=momentum, centered=centered)
 
 def train():
     mini_batch = 32
