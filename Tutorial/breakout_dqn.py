@@ -1,6 +1,7 @@
 import gym
 import random
 import numpy as np
+
 # import tensorflow as tf
 import tensorflow.compat.v1 as tf
 from collections import deque
@@ -252,8 +253,14 @@ if __name__ == "__main__":
             observe, reward, done, truncation, info = env.step(real_action)
             # pre-process the observation --> history
             next_state = pre_processing(observe)
+            print("0: ", observe.shape)
+            print("1: ", next_state.shape)
             next_state = np.reshape([next_state], (1, 84, 84, 1))
+            print("2: ", next_state.shape)
             next_history = np.append(next_state, history[:, :, :, :3], axis=3)
+            print("3: ", next_history.shape)
+            print("4: ", history.shape)
+            print("5: ", next_state.shape)
             cv2.imshow("Frame", observe)
             cv2.waitKey(0)
 
